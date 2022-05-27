@@ -31,6 +31,7 @@ from threading import Thread
 import requests
 import os
 import json
+from timeit import timeit
 
 response_list = []
 threads = []
@@ -39,6 +40,7 @@ threads = []
 def get_connection(request_url):
     try:
         r = requests.get(request_url)
+        # r.raise_for_status() # <---- Exception is to general
     except Exception as e:
         print(f"Exception is raised for {e}")
         is_ok = False
@@ -51,19 +53,25 @@ def get_connection(request_url):
 
 
 def main():
-    with open(os.getcwd() + "/links.txt", "r") as data_urls, open("url_results.json", "w") as data_json:
-        for line in data_urls.readlines():
-            url = line.rstrip("\n")
-            t = Thread(target=get_connection, args=(url,))
-            threads.append(t)
-            t.start()
+    lines = [] 
+    with open(os.getcwd() + "/links.txt", "r") as data_urls:
+        lines.extend(data_urls.readlines())
+    
+    for line in lines:
+        url = line.rstrip("\n")
+        t = Thread(target=get_connection, args=(url,))
+        threads.append(t)
+        t.start()
 
-        for t in threads:
-            t.join()
-
+    for t in threads:
+        t.join()
+      
+    with open("url_results.json", "w") as data_json:
         json.dump(response_list, fp=data_json, indent=2)
         print(f"{data_json.name} is created in current directory")
 
 
 if __name__ == "__main__":
-    main()
+    time_ = timeit(main, number=3)
+    print(time_)
+

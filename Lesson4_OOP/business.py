@@ -91,7 +91,7 @@ class Person(object):
         return '%s, %s years old' % (self.name, self.age)
 
 
-class Employee(Person, metaclass=abc.ABCMeta):
+class Employee(Person, abc.ABC):
 
     def __init__(self, name, age, sex=None, address=None):
         super().__init__(name, age, sex, address)
@@ -149,7 +149,7 @@ class Employee(Person, metaclass=abc.ABCMeta):
 
 class Engineer(Employee):
     def __init__(self, name, age, sex=None, address=None):
-        super(Employee, self).__init__(name, age, sex, address)
+        super().__init__(name, age, sex, address)
         self.company = None
         self.__money = 0
 
@@ -159,7 +159,7 @@ class Engineer(Employee):
 
     def put_money_into_my_wallet(self, amount):
         """ Adds the indicated amount of money to persons budget """
-        self.__money += amount
+        self._Employee__money += amount
 
     def show_money(self):
         """ Shows how much money person has earned """
@@ -170,7 +170,7 @@ class Manager(Employee):
     def __init__(self, name, age, sex=None, address=None):
         super(Employee, self).__init__(name, age, sex, address)
         self.company = None
-        self.__money = 0
+        self._Employee__money = 0
 
     def do_work(self):
         amount = self.company.write_reports(self)

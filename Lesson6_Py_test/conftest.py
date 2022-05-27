@@ -1,5 +1,5 @@
 import pytest
-from .company_model import *
+from .company_model import *  # !!! bad import
 
 
 @pytest.fixture(scope="function", autouse=True)

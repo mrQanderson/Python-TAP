@@ -32,6 +32,8 @@ import requests
 import os
 import json
 from timeit import timeit
+import aiohttp
+import asyncio
 
 response_list = []
 threads = []
@@ -52,7 +54,7 @@ def get_connection(request_url):
     response_list.append(r_obj)
 
 
-def main():
+def main_():
     lines = [] 
     with open(os.getcwd() + "/links.txt", "r") as data_urls:
         lines.extend(data_urls.readlines())
@@ -70,8 +72,40 @@ def main():
         json.dump(response_list, fp=data_json, indent=2)
         print(f"{data_json.name} is created in current directory")
 
+async def main():
+    lines = [] 
+    with open(os.getcwd() + "/links.txt", "r") as data_urls:
+        lines.extend(data_urls.readlines())
+
+    async with aiohttp.ClientSession() as session:
+        is_ok = False
+        status_code = None
+        async def get(request_url):
+            try:
+                async with session.get(request_url) as response:
+                    is_ok = response.ok
+                    status_code = response.status
+            except Exception as exc:
+                print(f"Exception is raised for {exc}")
+                is_ok = False
+                status_code = None
+            else:
+                is_ok = 'ok'
+                status_code = 'status_code'
+                r_obj = {"url": request_url, "is_ok": is_ok, "status_code": status_code}
+                response_list.append(r_obj)
+        
+        tasks = [get(line.rstrip("\n")) for line in lines]
+        await asyncio.gather(*tasks)
+
+    with open("url_results.json", "w") as data_json:
+        json.dump(response_list, fp=data_json, indent=2)
+        print(f"{data_json.name} is created in current directory")
+                
+        
+
+    
 
 if __name__ == "__main__":
-    time_ = timeit(main, number=3)
+    time_ = timeit(lambda: main_(), number=3)
     print(time_)
-

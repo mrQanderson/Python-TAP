@@ -1,0 +1,13 @@
+webdrivermanager
+selenium
+robotframework
+robotframework-seleniumlibrary
+robotframework-requests
+robotframework-pythonlibcore
+requests
+pytest
+pytest-xdist
+pytest-metadata
+pytest-html
+prettytable
+loguru
